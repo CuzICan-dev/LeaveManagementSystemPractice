@@ -11,4 +11,5 @@ public class ApplicationDbContext : IdentityDbContext
     {
     }
     public DbSet<LeaveType> LeaveTypes { get; set; }
+    public DbSet<Period> Periods { get; set; }
 }
