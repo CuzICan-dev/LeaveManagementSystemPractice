@@ -1,0 +1,1 @@
+﻿global using LeaveManagementSystemPractice.web.Models.LeaveTypes;
