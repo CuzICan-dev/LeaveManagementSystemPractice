@@ -144,7 +144,7 @@ namespace LeaveManagementSystemPractice.web.Controllers
             }
 
             LeaveTypeReadOnlyVM leaveTypeViewModel = mapper.Map<LeaveTypeReadOnlyVM>(leaveType);
-            return View(leaveType);
+            return View(leaveTypeViewModel);
         }
 
         // POST: LeaveType/Delete/5
