@@ -13,11 +13,7 @@ using LeaveManagementSystemPractice.web.Services.LeaveTypes;
 
 namespace LeaveManagementSystemPractice.web.Controllers
 {
-    public class LeaveTypeController(
-        ApplicationDbContext context, 
-        IMapper mapper,
-        ILeaveTypesService leaveTypesService
-        ) : Controller
+    public class LeaveTypeController(ILeaveTypesService leaveTypesService) : Controller
     {
         private const string NameExistsValidationMessage = "Name already exists in the database";
         // GET: LeaveType
@@ -114,7 +110,6 @@ namespace LeaveManagementSystemPractice.web.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    var leaveType = mapper.Map<LeaveType>(leaveTypeEdit);
                     if (!leaveTypesService.LeaveTypeExists(leaveTypeEdit.Id))
                     {
                         return NotFound();
