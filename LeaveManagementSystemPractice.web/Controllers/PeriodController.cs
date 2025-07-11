@@ -7,40 +7,28 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LeaveManagementSystemPractice.web.Data;
 using LeaveManagementSystemPractice.web.Data.Entities;
+using LeaveManagementSystemPractice.web.Services.Periods;
 
 namespace LeaveManagementSystemPractice.web.Controllers
 {
-    public class PeriodController : Controller
+    public class PeriodController(IPeriodService periodService) : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public PeriodController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
+        private const string NameExistsValidationMessage = "Name already exists in the database";
         // GET: Period
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Periods.ToListAsync());
+            var periods = await periodService.GetAllAsync();
+            return View(periods);
+
         }
 
         // GET: Period/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var period = await _context.Periods
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (period == null)
-            {
-                return NotFound();
-            }
-
-            return View(period);
+            if (id is null) return NotFound();
+            
+            var period = await periodService.GetByIdAsync<PeriodReadOnlyVM>(id.Value);
+            return period is null ? NotFound() : View(period);
         }
 
         // GET: Period/Create
@@ -54,15 +42,17 @@ namespace LeaveManagementSystemPractice.web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,StartDate,EndDate")] Period period)
+        public async Task<IActionResult> Create(PeriodCreateVM periodCreate)
         {
+            if (await periodService.CheckIfPeriodNameExists(periodCreate.Name))
+                ModelState.AddModelError(nameof(periodCreate.Name), NameExistsValidationMessage);
+            
             if (ModelState.IsValid)
             {
-                _context.Add(period);
-                await _context.SaveChangesAsync();
+                await periodService.CreateAsync(periodCreate);
                 return RedirectToAction(nameof(Index));
             }
-            return View(period);
+            return View(periodCreate);
         }
 
         // GET: Period/Edit/5
@@ -73,7 +63,7 @@ namespace LeaveManagementSystemPractice.web.Controllers
                 return NotFound();
             }
 
-            var period = await _context.Periods.FindAsync(id);
+            var period = await periodService.GetByIdAsync<PeriodEditVM>(id.Value);
             if (period == null)
             {
                 return NotFound();
@@ -86,23 +76,26 @@ namespace LeaveManagementSystemPractice.web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,StartDate,EndDate")] Period period)
+        public async Task<IActionResult> Edit(int id, PeriodEditVM periodEdit)
         {
-            if (id != period.Id)
+            if (id != periodEdit.Id)
             {
                 return NotFound();
             }
+            
+            if (await periodService.CheckIfPeriodNameExists(periodEdit))
+                ModelState.AddModelError(nameof(periodEdit.Name), NameExistsValidationMessage);
+
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(period);
-                    await _context.SaveChangesAsync();
+                    await periodService.EditAsync(periodEdit);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PeriodExists(period.Id))
+                    if (!periodService.PeriodExists(periodEdit.Id))
                     {
                         return NotFound();
                     }
@@ -113,7 +106,7 @@ namespace LeaveManagementSystemPractice.web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(period);
+            return View(periodEdit);
         }
 
         // GET: Period/Delete/5
@@ -123,9 +116,8 @@ namespace LeaveManagementSystemPractice.web.Controllers
             {
                 return NotFound();
             }
-
-            var period = await _context.Periods
-                .FirstOrDefaultAsync(m => m.Id == id);
+            
+            var period = await periodService.GetByIdAsync<PeriodReadOnlyVM>(id.Value);
             if (period == null)
             {
                 return NotFound();
@@ -139,19 +131,8 @@ namespace LeaveManagementSystemPractice.web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var period = await _context.Periods.FindAsync(id);
-            if (period != null)
-            {
-                _context.Periods.Remove(period);
-            }
-
-            await _context.SaveChangesAsync();
+            await periodService.RemoveAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool PeriodExists(int id)
-        {
-            return _context.Periods.Any(e => e.Id == id);
         }
     }
 }

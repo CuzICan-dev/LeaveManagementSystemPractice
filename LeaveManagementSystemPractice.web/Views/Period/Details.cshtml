@@ -1,10 +1,10 @@
-@model LeaveManagementSystemPractice.web.Data.Entities.Period
+@model PeriodReadOnlyVM
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = $"{Model.Name} Details";
 }
 
-<h1>Details</h1>
+<h1>@Model.Name Details</h1>
 
 <div>
     <h4>Period</h4>
@@ -31,6 +31,6 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning"><i class="bi bi-pencil-square"></i> Edit</a>
+    <a asp-action="Index" class="btn btn-primary"><i class="bi bi-box-arrow-left"></i> Back to List</a>
 </div>

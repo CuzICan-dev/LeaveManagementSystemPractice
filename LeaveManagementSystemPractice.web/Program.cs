@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using LeaveManagementSystemPractice.web.Data;
 using LeaveManagementSystemPractice.web.Services.LeaveTypes;
+using LeaveManagementSystemPractice.web.Services.Periods;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddScoped<ILeaveTypesService,LeaveTypesService>();
+builder.Services.AddScoped<IPeriodService, PeriodService>();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 

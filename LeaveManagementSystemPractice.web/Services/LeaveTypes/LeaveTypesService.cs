@@ -55,11 +55,14 @@ public class LeaveTypesService(ApplicationDbContext context, IMapper mapper) : I
     
     public async Task<bool> CheckIfLeaveTypeNameExists(string name)
     {
-        return await context.LeaveTypes.AnyAsync(e => e.Name.ToLower().Equals(name.ToLower()));
+        return await context.LeaveTypes
+            .AnyAsync(e => e.Name.ToLower().Equals(name.ToLower()));
     }
     
     public async Task<bool> CheckIfLeaveTypeNameExists(LeaveTypeEditVM leaveTypeEdit)
     {
-        return await context.LeaveTypes.AnyAsync(e => e.Name.ToLower().Equals(leaveTypeEdit.Name.ToLower()) && e.Id != leaveTypeEdit.Id);
+        return await context.LeaveTypes
+            .AnyAsync(e => e.Name.ToLower().Equals(leaveTypeEdit.Name.ToLower()) 
+                           && e.Id != leaveTypeEdit.Id);
     }
 }

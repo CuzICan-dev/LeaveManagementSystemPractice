@@ -1,12 +1,10 @@
-@model LeaveManagementSystemPractice.web.Data.Entities.Period
+@model PeriodEditVM
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Period";
 }
 
 <h1>Edit</h1>
-
-<h4>Period</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -18,25 +16,27 @@
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
+            <br/>
             <div class="form-group">
                 <label asp-for="StartDate" class="control-label"></label>
                 <input asp-for="StartDate" class="form-control" />
                 <span asp-validation-for="StartDate" class="text-danger"></span>
             </div>
+            <br/>
             <div class="form-group">
                 <label asp-for="EndDate" class="control-label"></label>
                 <input asp-for="EndDate" class="form-control" />
                 <span asp-validation-for="EndDate" class="text-danger"></span>
             </div>
+            <br/>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <button type="submit" class="btn btn-warning">
+                    <i class="bi bi-pencil-square"></i> Save
+                </button>
+                <a asp-action="Index" class="btn btn-primary"><i class="bi bi-box-arrow-left"></i> Back to List</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

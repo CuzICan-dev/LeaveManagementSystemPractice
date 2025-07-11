@@ -1,4 +1,4 @@
-@model IEnumerable<LeaveManagementSystemPractice.web.Data.Entities.Period>
+@model IEnumerable<PeriodReadOnlyVM>
 
 @{
     ViewData["Title"] = "Index";
@@ -7,7 +7,7 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Create New</a>
 </p>
 <table class="table">
     <thead>
@@ -37,9 +37,9 @@
                 @Html.DisplayFor(modelItem => item.EndDate)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning"><i class="bi bi-pencil-square"></i> Edit</a>
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info"><i class="bi bi-info-circle"></i> Details</a>
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger"><i class="bi bi-trash3"></i> Delete</a>
             </td>
         </tr>
 }
