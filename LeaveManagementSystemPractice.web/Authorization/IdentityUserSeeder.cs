@@ -7,7 +7,7 @@ public static class IdentityUserSeeder
     public static async Task SeedUsersAsync(this IServiceProvider services, ILogger logger)
     {
         using var scope = services.CreateScope();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
         if (!roleManager.Roles.Any())
@@ -25,6 +25,7 @@ public static class IdentityUserSeeder
                 FirstName   = "System",
                 LastName    = "Administrator",
                 Password    = "ChangeMe123!",
+                DateOfBirth = new DateOnly(1990, 1, 1), // optional, can be set later
                 EnumRole    = AppUserRole.Administrator // default role
             },
             new SeedUser
@@ -33,6 +34,7 @@ public static class IdentityUserSeeder
                 FirstName   = "Marty",
                 LastName    = "Manager",
                 Password    = "ChangeMe123!",
+                DateOfBirth = new DateOnly(1985, 5, 15), // optional, can be set later
                 EnumRole    = AppUserRole.Supervisor // default role
             },
             new SeedUser
@@ -41,6 +43,7 @@ public static class IdentityUserSeeder
                 FirstName   = "Stephanie",
                 LastName    = "Muller",
                 Password    = "ChangeMe123!",
+                DateOfBirth = new DateOnly(1992, 3, 20), // optional, can be set later
                 EnumRole    = AppUserRole.Employee // default role
             },
             new SeedUser
@@ -49,6 +52,7 @@ public static class IdentityUserSeeder
             FirstName   = "Stefan",
             LastName    = "King",
             Password    = "ChangeMe123!",
+            DateOfBirth = new DateOnly(1995, 7, 30), // optional, can be set later
             EnumRole    = AppUserRole.Employee // default role
             }
             // add more if needed
@@ -59,11 +63,14 @@ public static class IdentityUserSeeder
             var user = await userManager.FindByEmailAsync(s.Email);
 
             if (user is not null) continue;
-            user = new IdentityUser
+            user = new ApplicationUser
             {
                 UserName     = s.Email,
                 Email        = s.Email,
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                FirstName    = s.FirstName,
+                LastName     = s.LastName,
+                DateOfBirth = s.DateOfBirth
             };
                 
             var result = await userManager.CreateAsync(user, s.Password);
@@ -96,6 +103,7 @@ public static class IdentityUserSeeder
         public string FirstName  { get; init; } = default!;
         public string LastName   { get; init; } = default!;
         public string Password   { get; init; } = default!;
+        public DateOnly DateOfBirth { get; set; }= default!; // optional, can be set later
         public AppUserRole EnumRole { get; init; } = AppUserRole.Employee; // default role
     }
 }
