@@ -1,4 +1,5 @@
 using System.Reflection;
+using LeaveManagementSystemPractice.web.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using LeaveManagementSystemPractice.web.Data;
@@ -20,10 +21,15 @@ builder.Services.AddScoped<IPeriodService, PeriodService>();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+/* Seeding … */
+await app.Services.SeedRolesAsync(app.Logger);
+await app.Services.SeedUsersAsync(app.Logger);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
