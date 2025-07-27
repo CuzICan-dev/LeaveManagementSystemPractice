@@ -26,6 +26,7 @@ namespace LeaveManagementSystemPractice.web.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IUserStore<ApplicationUser> _userStore;
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
@@ -35,6 +36,7 @@ namespace LeaveManagementSystemPractice.web.Areas.Identity.Pages.Account
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole> roleManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
@@ -42,6 +44,7 @@ namespace LeaveManagementSystemPractice.web.Areas.Identity.Pages.Account
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
+            _roleManager = roleManager;
             _logger = logger;
             _emailSender = emailSender;
         }
@@ -115,11 +118,13 @@ namespace LeaveManagementSystemPractice.web.Areas.Identity.Pages.Account
             public DateOnly DateOfBirth { get; set; }
         }
 
+        public string[] RoleNames { get; set; }
 
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            RoleNames = _roleManager.Roles.Select(r => r.Name).Where(r => r != Roles.Administrator).ToArray();
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -171,6 +176,7 @@ namespace LeaveManagementSystemPractice.web.Areas.Identity.Pages.Account
             }
 
             // If we got this far, something failed, redisplay form
+            RoleNames = _roleManager.Roles.Select(r => r.Name).Where(r => r != Roles.Administrator).ToArray();
             return Page();
         }
 

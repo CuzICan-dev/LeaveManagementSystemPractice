@@ -42,6 +42,20 @@
                 <label asp-for="Input.ConfirmPassword">Confirm Password</label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="radioDefault" id="radioDefault1">
+                <label class="form-check-label" for="radioDefault1">
+                    Default radio
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="radioDefault" id="radioDefault2" checked>
+                <label class="form-check-label" for="radioDefault2">
+                    Default checked radio
+                </label>
+            </div>
+            
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </form>
     </div>
