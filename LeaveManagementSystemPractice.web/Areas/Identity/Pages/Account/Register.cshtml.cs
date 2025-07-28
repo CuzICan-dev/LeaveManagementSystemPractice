@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace LeaveManagementSystemPractice.web.Areas.Identity.Pages.Account
@@ -54,7 +55,7 @@ namespace LeaveManagementSystemPractice.web.Areas.Identity.Pages.Account
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
         [BindProperty]
-        public InputModel Input { get; set; }
+        public InputModel Input { get; set; } = new InputModel();
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -116,6 +117,8 @@ namespace LeaveManagementSystemPractice.web.Areas.Identity.Pages.Account
             [DataType(DataType.Date)]
             [Display(Name = "Date Of Birth")]
             public DateOnly DateOfBirth { get; set; }
+            
+            public string RoleName { get; set; }
         }
 
         public string[] RoleNames { get; set; }
@@ -124,7 +127,11 @@ namespace LeaveManagementSystemPractice.web.Areas.Identity.Pages.Account
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
-            RoleNames = _roleManager.Roles.Select(r => r.Name).Where(r => r != Roles.Administrator).ToArray();
+            RoleNames = await _roleManager.Roles.Select(r => r.Name).Where(r => r != Roles.Administrator).ToArrayAsync();
+            if (RoleNames.Length >= 1)
+            {
+                Input.RoleName = RoleNames[0];
+            }
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -146,7 +153,17 @@ namespace LeaveManagementSystemPractice.web.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
-
+                    
+                    if (Input.RoleName == Roles.Supervisor)
+                    {
+                        await _userManager.AddToRolesAsync(user, [Roles.Supervisor, Roles.Employee]); 
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, Roles.Employee);
+                    }
+                    
+                    
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -176,7 +193,7 @@ namespace LeaveManagementSystemPractice.web.Areas.Identity.Pages.Account
             }
 
             // If we got this far, something failed, redisplay form
-            RoleNames = _roleManager.Roles.Select(r => r.Name).Where(r => r != Roles.Administrator).ToArray();
+            RoleNames = await _roleManager.Roles.Select(r => r.Name).Where(r => r != Roles.Administrator).ToArrayAsync();
             return Page();
         }
 
