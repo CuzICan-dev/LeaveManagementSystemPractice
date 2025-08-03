@@ -3,8 +3,10 @@ using LeaveManagementSystemPractice.web.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using LeaveManagementSystemPractice.web.Data;
+using LeaveManagementSystemPractice.web.Services;
 using LeaveManagementSystemPractice.web.Services.LeaveTypes;
 using LeaveManagementSystemPractice.web.Services.Periods;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,8 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddScoped<ILeaveTypesService,LeaveTypesService>();
 builder.Services.AddScoped<IPeriodService, PeriodService>();
 
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+    
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
