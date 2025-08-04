@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using LeaveManagementSystemPractice.web.Models;
 
 namespace LeaveManagementSystemPractice.web.Controllers;
-
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;

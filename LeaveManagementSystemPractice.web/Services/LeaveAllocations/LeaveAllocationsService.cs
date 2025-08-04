@@ -32,4 +32,13 @@ public class LeaveAllocationsService(ApplicationDbContext context) : ILeaveAlloc
         // save changes to the database
         await context.SaveChangesAsync();
     }
+    public async Task<List<LeaveAllocation>> GetAllocationsAsync(string employeeId)
+    {
+        return await context.LeaveAllocations
+            .Include(la => la.LeaveType)
+            .Include(la => la.Period)
+            .Include(la => la.Employee)
+            .Where(la => la.EmployeeId == employeeId)
+            .ToListAsync();
+    }
 }
