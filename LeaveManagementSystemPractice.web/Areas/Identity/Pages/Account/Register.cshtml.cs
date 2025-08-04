@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using LeaveManagementSystemPractice.web.Authorization;
+using LeaveManagementSystemPractice.web.Services.LeaveAllocations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,7 @@ namespace LeaveManagementSystemPractice.web.Areas.Identity.Pages.Account
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly LeaveAllocationsService _leaveAllocationsService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IUserStore<ApplicationUser> _userStore;
@@ -34,6 +36,7 @@ namespace LeaveManagementSystemPractice.web.Areas.Identity.Pages.Account
         private readonly IEmailSender _emailSender;
 
         public RegisterModel(
+            LeaveAllocationsService leaveAllocationsService,
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
@@ -41,6 +44,7 @@ namespace LeaveManagementSystemPractice.web.Areas.Identity.Pages.Account
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
+            _leaveAllocationsService = leaveAllocationsService;
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
@@ -163,8 +167,8 @@ namespace LeaveManagementSystemPractice.web.Areas.Identity.Pages.Account
                         await _userManager.AddToRoleAsync(user, Roles.Employee);
                     }
                     
-                    
                     var userId = await _userManager.GetUserIdAsync(user);
+                    await _leaveAllocationsService.AllocateLeaveAsync(userId);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                     var callbackUrl = Url.Page(

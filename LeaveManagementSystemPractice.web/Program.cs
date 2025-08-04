@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using LeaveManagementSystemPractice.web.Data;
 using LeaveManagementSystemPractice.web.Services;
+using LeaveManagementSystemPractice.web.Services.LeaveAllocations;
 using LeaveManagementSystemPractice.web.Services.LeaveTypes;
 using LeaveManagementSystemPractice.web.Services.Periods;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -18,6 +19,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddScoped<ILeaveTypesService,LeaveTypesService>();
+builder.Services.AddScoped<ILeaveAllocationsService, LeaveAllocationsService>();
 builder.Services.AddScoped<IPeriodService, PeriodService>();
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();

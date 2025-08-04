@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using LeaveManagementSystemPractice.web.Data;
 using LeaveManagementSystemPractice.web.Data.Entities;
 using LeaveManagementSystemPractice.web.Services.Periods;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LeaveManagementSystemPractice.web.Controllers
 {
+    [Authorize(Roles = Roles.Administrator)]
     public class PeriodController(IPeriodService periodService) : Controller
     {
         private const string NameExistsValidationMessage = "Name already exists in the database";
